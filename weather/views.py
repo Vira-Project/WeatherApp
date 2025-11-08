@@ -3,11 +3,9 @@ import requests
 from .models import City
 from .forms import CityForm
 
+from .config import WEATHER_URL
+
 def index(request):
-    api_key = "f8fb469678bf1d6bc87f2d9f43340d6b"
-
-    url = "https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=" + api_key
-
     if request.method == 'POST':
         form = CityForm(request.POST)
         form.save()
@@ -19,7 +17,7 @@ def index(request):
     all_cities = []
 
     for city in cities:
-        res = requests.get(url.format(city.name)).json()
+        res = requests.get(WEATHER_URL.format(city.name)).json()
 
         city_info = {
             'city': city.name,
