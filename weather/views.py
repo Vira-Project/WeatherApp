@@ -1,24 +1,30 @@
 from django.shortcuts import render
 import requests
+from .models import City
 
 def index(request):
     api_key = "f8fb469678bf1d6bc87f2d9f43340d6b"
-    city = "London"
 
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={api_key}"
+    url = "https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=" + api_key
+    
+    cities = City.objects.all()
 
-    print(url)
+    all_cities = []
 
-    res = requests.get(url).json()
+    for city in cities:
+        res = requests.get(url.format(city.name)).json()
 
-    city_info = {
-        'city': city,
-        'temp': res['main']['temp'],
-        'icon': res['weather'][0]['icon']
-    }
+        city_info = {
+            'city': city.name,
+            'temp': res['main']['temp'],
+            'icon': res['weather'][0]['icon']
+        }
+
+        all_cities.append(city_info)
+        
 
     context = {
-        'info': city_info
+        'all_info': all_cities
     }
 
     return render(request, 'weather/index.html', context)
