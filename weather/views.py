@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 import requests
 from .models import City
 from .forms import CityForm
@@ -9,7 +9,7 @@ def index(request):
     if request.method == 'POST':
         form = CityForm(request.POST)
         form.save()
-    
+
     form = CityForm()
 
     cities = City.objects.all()
@@ -20,6 +20,7 @@ def index(request):
         res = requests.get(WEATHER_URL.format(city.name)).json()
 
         city_info = {
+            'id': city.pk,
             'city': city.name,
             'temp': res['main']['temp'],
             'icon': res['weather'][0]['icon']
@@ -34,3 +35,9 @@ def index(request):
     }
 
     return render(request, 'weather/index.html', context)
+
+def delete_city(request, pk):
+    item = get_object_or_404(City, pk=pk)
+    if request.method == "POST" and request.POST.get("_method") == "delete":
+        item.delete()
+        return redirect('home')

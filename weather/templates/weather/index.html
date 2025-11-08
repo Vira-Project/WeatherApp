@@ -48,6 +48,11 @@
                                 <div class="col-2 offset-1">
                                     <img src="http://openweathermap.org/img/w/{{info.icon}}.png" alt="photo weather">
                                 </div>
+                                <form method="post" action="{% url 'delete_city' info.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="_method" value="delete">
+                                    <input type="submit" value="Delete" class="btn btn-danger">
+                                </form>
                             </div>
                         </div>
                     {% endfor %}
