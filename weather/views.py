@@ -17,16 +17,19 @@ def index(request):
     all_cities = []
 
     for city in cities:
-        res = requests.get(WEATHER_URL.format(city.name)).json()
+        res = requests.get(WEATHER_URL.format(city.name))
+        res_status_code = res.status_code
+        res_json = res.json()
 
-        city_info = {
-            'id': city.pk,
-            'city': city.name,
-            'temp': res['main']['temp'],
-            'icon': res['weather'][0]['icon']
-        }
+        if res_status_code == 200:
+            city_info = {
+                'id': city.pk,
+                'city': city.name,
+                'temp': res_json['main']['temp'],
+                'icon': res_json['weather'][0]['icon']
+            }
 
-        all_cities.append(city_info)
+            all_cities.append(city_info)
         
 
     context = {
